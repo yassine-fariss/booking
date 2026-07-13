@@ -22,6 +22,19 @@ const Section = () => {
   // Search Bar state
   const [searchSpecialty, setSearchSpecialty] = useState("");
   const [searchCity, setSearchCity] = useState("");
+  
+  // Advanced Filters state
+  const [filters, setFilters] = useState({
+    gender: "",
+    language: "",
+    experience: "",
+    availability: "",
+    fee: "",
+    rating: "",
+    hospital: "",
+    teleconsultation: ""
+  });
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // FAQ state
   const [openFaq, setOpenFaq] = useState(null);
@@ -38,7 +51,7 @@ const Section = () => {
   }, []);
 
   const handleSearchSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const queryParams = [];
     if (searchSpecialty && searchSpecialty !== "All Specialties") {
       queryParams.push(`specialite=${encodeURIComponent(searchSpecialty)}`);
@@ -46,8 +59,27 @@ const Section = () => {
     if (searchCity && searchCity !== "All Cities") {
       queryParams.push(`city=${encodeURIComponent(searchCity)}`);
     }
+    // Append advanced filters
+    if (filters.gender) queryParams.push(`gender=${encodeURIComponent(filters.gender)}`);
+    if (filters.language) queryParams.push(`language=${encodeURIComponent(filters.language)}`);
+    if (filters.experience) queryParams.push(`experience=${encodeURIComponent(filters.experience)}`);
+    if (filters.availability) queryParams.push(`availability=${encodeURIComponent(filters.availability)}`);
+    if (filters.fee) queryParams.push(`fee=${encodeURIComponent(filters.fee)}`);
+    if (filters.rating) queryParams.push(`rating=${encodeURIComponent(filters.rating)}`);
+    if (filters.hospital) queryParams.push(`hospital=${encodeURIComponent(filters.hospital)}`);
+    if (filters.teleconsultation) queryParams.push(`teleconsultation=${encodeURIComponent(filters.teleconsultation)}`);
+
     const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
     navigate(`/recherche${queryString}`);
+  };
+
+  const handleChipClick = (specialtyName) => {
+    setSearchSpecialty(specialtyName);
+    const queryParams = [`specialite=${encodeURIComponent(specialtyName)}`];
+    if (searchCity) {
+      queryParams.push(`city=${encodeURIComponent(searchCity)}`);
+    }
+    navigate(`/recherche?${queryParams.join("&")}`);
   };
 
   const handleNewsletterSubmit = (e) => {
@@ -91,97 +123,292 @@ const Section = () => {
     }
   ];
 
+  const specialtyChips = [
+    { label: "❤️ Cardiology", name: "Cardiology" },
+    { label: "🦷 Dentistry", name: "Dentistry" },
+    { label: "👶 Pediatrics", name: "Pediatrics" },
+    { label: "🧠 Neurology", name: "Neurology" },
+    { label: "👁 Ophthalmology", name: "Ophthalmology" },
+    { label: "🦴 Orthopedics", name: "Orthopedics" },
+    { label: "🩺 General Medicine", name: "General Medicine" }
+  ];
+
+  const trustBadges = [
+    { label: "✔ Verified Doctors", color: "bg-emerald-50 text-emerald-700 border-emerald-100" },
+    { label: "⭐ 4.9 Average Rating", color: "bg-amber-50 text-amber-700 border-amber-100" },
+    { label: "👨‍⚕️ 500+ Specialists", color: "bg-blue-50 text-blue-700 border-blue-100" },
+    { label: "📅 Instant Booking", color: "bg-indigo-50 text-indigo-700 border-indigo-100" },
+    { label: "🏥 Trusted Clinics", color: "bg-violet-50 text-violet-700 border-violet-100" }
+  ];
+
   return (
-    <div className="space-y-20 bg-gray-50/50 pb-20">
+    <div className="space-y-20 bg-gray-50/50 pb-20 pt-16">
       
       {/* Hero & Search Section */}
       <div className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50/30 overflow-hidden py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
-          <div className="space-y-8 text-center lg:text-left">
-            <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border border-blue-100">
-              <CheckCircleIcon className="w-4 h-4" />
-              Easy Medical Consultations
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
-              Find the Best <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Doctors</span> Near You
-            </h1>
-            <p className="text-gray-600 text-lg max-w-xl mx-auto lg:mx-0">
-              DocAppoint makes scheduling healthcare appointments fast, secure, and stress-free. Book certified professionals in just a few clicks.
-            </p>
-            
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-              <Link to="/recherche" className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg transition">
-                Book Appointment
-              </Link>
-              <Link to="/about" className="px-8 py-3 bg-white text-gray-700 font-semibold rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition">
-                Learn More
-              </Link>
-            </div>
+        
+        {/* Main Hero Header */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center space-y-6 z-10">
+          <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border border-blue-100 animate-fade-in">
+            <CheckCircleIcon className="w-4 h-4" />
+            Easy Medical Consultations
           </div>
-
-          {/* Hero Image */}
-          <div className="hidden lg:block relative justify-self-center">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-200 to-indigo-300 rounded-full blur-3xl opacity-20 scale-75"></div>
-            <img 
-              src="./img/doctor-2.png" 
-              className="relative max-w-md w-full object-contain mx-auto drop-shadow-xl" 
-              alt="Healthcare professional illustration" 
-            />
-          </div>
-
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tight max-w-4xl mx-auto">
+            Find the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Right Doctor</span> in Minutes
+          </h1>
+          <p className="text-gray-500 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+            Search thousands of verified doctors by specialty and location, compare profiles, read reviews, and instantly book your appointment.
+          </p>
         </div>
 
-        {/* Floating Doctor Search Bar */}
-        <div className="max-w-4xl mx-auto px-4 mt-12 md:mt-16">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 md:p-6">
-            <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        {/* Premium Center Search Card */}
+        <div className="max-w-5xl mx-auto px-4 mt-12 relative z-10">
+          <div className="bg-white rounded-[32px] border border-gray-100 shadow-xl p-6 md:p-8 space-y-6 transition hover:shadow-2xl">
+            
+            <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
               
-              {/* Specialty Select */}
-              <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 focus-within:border-blue-500 transition">
-                <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
-                <select
-                  value={searchSpecialty}
-                  onChange={(e) => setSearchSpecialty(e.target.value)}
-                  className="bg-transparent text-sm text-gray-700 outline-none w-full cursor-pointer"
-                >
-                  <option value="">Choose Specialty</option>
-                  <option value="Cardiology">Cardiology</option>
-                  <option value="Dermatology">Dermatology</option>
-                  <option value="Neurology">Neurology</option>
-                  <option value="Pediatrics">Pediatrics</option>
-                  <option value="General Medicine">General Medicine</option>
-                </select>
+              {/* Specialty Select Panel */}
+              <div className="md:col-span-5 flex items-center gap-3 bg-gray-50/60 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-gray-200 focus-within:border-blue-500 focus-within:bg-white focus-within:shadow-sm transition">
+                <MagnifyingGlassIcon className="w-6 h-6 text-blue-500" />
+                <div className="flex-1 text-left">
+                  <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Specialty</span>
+                  <select
+                    value={searchSpecialty}
+                    onChange={(e) => setSearchSpecialty(e.target.value)}
+                    className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full cursor-pointer appearance-none"
+                  >
+                    <option value="">Choose a specialty</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="General Medicine">General Medicine</option>
+                    <option value="Ophthalmology">Ophthalmology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Dentistry">Dentistry</option>
+                    <option value="Gynecology">Gynecology</option>
+                    <option value="Psychiatry">Psychiatry</option>
+                  </select>
+                </div>
               </div>
 
-              {/* City Select */}
-              <div className="flex items-center gap-3 bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 focus-within:border-blue-500 transition">
-                <MapPinIcon className="w-5 h-5 text-gray-400" />
-                <select
-                  value={searchCity}
-                  onChange={(e) => setSearchCity(e.target.value)}
-                  className="bg-transparent text-sm text-gray-700 outline-none w-full cursor-pointer"
-                >
-                  <option value="">Choose City</option>
-                  <option value="Casablanca">Casablanca</option>
-                  <option value="Rabat">Rabat</option>
-                  <option value="Marrakech">Marrakech</option>
-                  <option value="Tangier">Tangier</option>
-                  <option value="Fes">Fes</option>
-                </select>
+              {/* City Select Panel */}
+              <div className="md:col-span-4 flex items-center gap-3 bg-gray-50/60 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-gray-200 focus-within:border-blue-500 focus-within:bg-white focus-within:shadow-sm transition">
+                <MapPinIcon className="w-6 h-6 text-indigo-500" />
+                <div className="flex-1 text-left">
+                  <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Location</span>
+                  <select
+                    value={searchCity}
+                    onChange={(e) => setSearchCity(e.target.value)}
+                    className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full cursor-pointer appearance-none"
+                  >
+                    <option value="">Choose a city</option>
+                    <option value="Casablanca">Casablanca</option>
+                    <option value="Rabat">Rabat</option>
+                    <option value="Marrakech">Marrakech</option>
+                    <option value="Tangier">Tangier</option>
+                    <option value="Fes">Fes</option>
+                    <option value="Agadir">Agadir</option>
+                    <option value="Oujda">Oujda</option>
+                    <option value="Kenitra">Kenitra</option>
+                    <option value="Tetouan">Tetouan</option>
+                    <option value="Safi">Safi</option>
+                  </select>
+                </div>
               </div>
 
-              {/* Search Submit Button */}
-              <button 
-                type="submit" 
-                className="w-full bg-blue-600 text-white font-bold py-3.5 px-6 rounded-xl hover:bg-blue-700 transition shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-              >
-                <MagnifyingGlassIcon className="w-5 h-5" />
-                Search Doctors
-              </button>
+              {/* Find Doctors CTA button */}
+              <div className="md:col-span-3">
+                <button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl hover:shadow-lg hover:shadow-blue-500/10 hover:scale-[1.02] active:scale-[0.98] transition duration-200 flex items-center justify-center gap-2"
+                >
+                  <MagnifyingGlassIcon className="w-5.5 h-5.5" />
+                  <span>Find Doctors</span>
+                </button>
+              </div>
 
             </form>
+
+            {/* Advanced Filters Expand Toggle */}
+            <div className="text-left border-t border-gray-50 pt-4 flex justify-between items-center">
+              <button 
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 transition"
+              >
+                <span>{showAdvanced ? "Hide" : "Show"} Advanced Filters</span>
+                <ChevronDownIcon className={`w-4 h-4 transition duration-200 ${showAdvanced ? "rotate-180" : ""}`} />
+              </button>
+              {showAdvanced && (
+                <button
+                  type="button"
+                  onClick={() => setFilters({
+                    gender: "",
+                    language: "",
+                    experience: "",
+                    availability: "",
+                    fee: "",
+                    rating: "",
+                    hospital: "",
+                    teleconsultation: ""
+                  })}
+                  className="text-xs text-gray-400 hover:text-gray-600 font-medium transition"
+                >
+                  Reset Filters
+                </button>
+              )}
+            </div>
+
+            {/* Collapsible Advanced Filters Section */}
+            {showAdvanced && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 text-left animate-fade-in">
+                
+                {/* Gender select */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Gender</label>
+                  <select
+                    value={filters.gender}
+                    onChange={(e) => setFilters({ ...filters, gender: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">All Genders</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+
+                {/* Languages select */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Language</label>
+                  <select
+                    value={filters.language}
+                    onChange={(e) => setFilters({ ...filters, language: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">All Languages</option>
+                    <option value="English">English</option>
+                    <option value="French">French</option>
+                    <option value="Arabic">Arabic</option>
+                    <option value="Spanish">Spanish</option>
+                  </select>
+                </div>
+
+                {/* Experience select */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Experience</label>
+                  <select
+                    value={filters.experience}
+                    onChange={(e) => setFilters({ ...filters, experience: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">Any Experience</option>
+                    <option value="1-5">1-5 Years</option>
+                    <option value="5-10">5-10 Years</option>
+                    <option value="10">10+ Years</option>
+                  </select>
+                </div>
+
+                {/* Availability select */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Availability</label>
+                  <select
+                    value={filters.availability}
+                    onChange={(e) => setFilters({ ...filters, availability: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">Any Availability</option>
+                    <option value="today">Available Today</option>
+                    <option value="tomorrow">Available Tomorrow</option>
+                  </select>
+                </div>
+
+                {/* Consultation Fee */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Max Consultation Fee</label>
+                  <select
+                    value={filters.fee}
+                    onChange={(e) => setFilters({ ...filters, fee: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">Any Price</option>
+                    <option value="150">Under 150 DH</option>
+                    <option value="250">Under 250 DH</option>
+                    <option value="400">Under 400 DH</option>
+                  </select>
+                </div>
+
+                {/* Rating */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Min Rating</label>
+                  <select
+                    value={filters.rating}
+                    onChange={(e) => setFilters({ ...filters, rating: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">Any Rating</option>
+                    <option value="3">⭐⭐⭐ & Up</option>
+                    <option value="4">⭐⭐⭐⭐ & Up</option>
+                    <option value="4.5">⭐⭐⭐⭐.5 & Up</option>
+                  </select>
+                </div>
+
+                {/* Hospital */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Hospital / Cabinet</label>
+                  <input
+                    type="text"
+                    value={filters.hospital}
+                    onChange={(e) => setFilters({ ...filters, hospital: e.target.value })}
+                    placeholder="e.g. Clinic Anfa"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  />
+                </div>
+
+                {/* Teleconsultation */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Teleconsultation</label>
+                  <select
+                    value={filters.teleconsultation}
+                    onChange={(e) => setFilters({ ...filters, teleconsultation: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-2 px-3 text-xs font-semibold text-gray-600 outline-none focus:border-blue-500 focus:bg-white transition"
+                  >
+                    <option value="">All Consultations</option>
+                    <option value="online">Video Consultation</option>
+                    <option value="in_person">In Person Cabinet</option>
+                  </select>
+                </div>
+
+              </div>
+            )}
+
           </div>
+        </div>
+
+        {/* Specialty selection chips below search card */}
+        <div className="max-w-4xl mx-auto px-4 mt-6 relative z-10 flex flex-wrap justify-center gap-2">
+          {specialtyChips.map((chip, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleChipClick(chip.name)}
+              className="bg-white hover:bg-blue-50 text-gray-600 hover:text-blue-600 text-xs font-bold px-4 py-2 rounded-full border border-gray-100 hover:border-blue-200 transition shadow-sm hover:-translate-y-0.5"
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Elegant trust indicators badges below */}
+        <div className="max-w-4xl mx-auto px-4 mt-8 relative z-10 flex flex-wrap justify-center gap-3">
+          {trustBadges.map((badge, idx) => (
+            <div
+              key={idx}
+              className={`inline-flex items-center gap-1.5 border px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${badge.color}`}
+            >
+              {badge.label}
+            </div>
+          ))}
         </div>
 
       </div>
