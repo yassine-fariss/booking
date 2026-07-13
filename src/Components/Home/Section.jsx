@@ -165,17 +165,17 @@ const Section = () => {
         <div className="max-w-5xl mx-auto px-4 mt-12 relative z-10">
           <div className="bg-white rounded-[32px] border border-gray-100 shadow-xl p-6 md:p-8 space-y-6 transition hover:shadow-2xl">
             
-            <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
               
               {/* Specialty Select Panel */}
-              <div className="md:col-span-5 flex items-center gap-3 bg-gray-50/60 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-gray-200 focus-within:border-blue-500 focus-within:bg-white focus-within:shadow-sm transition">
-                <MagnifyingGlassIcon className="w-6 h-6 text-blue-500" />
-                <div className="flex-1 text-left">
+              <div className="flex-grow md:flex-[4] flex items-center gap-3 bg-gray-50/60 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-gray-200 focus-within:border-blue-500 focus-within:bg-white focus-within:shadow-sm transition">
+                <MagnifyingGlassIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                <div className="flex-1 text-left min-w-0">
                   <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Specialty</span>
                   <select
                     value={searchSpecialty}
                     onChange={(e) => setSearchSpecialty(e.target.value)}
-                    className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full cursor-pointer appearance-none"
+                    className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full cursor-pointer appearance-none truncate"
                   >
                     <option value="">Choose a specialty</option>
                     <option value="Cardiology">Cardiology</option>
@@ -193,14 +193,14 @@ const Section = () => {
               </div>
 
               {/* City Select Panel */}
-              <div className="md:col-span-4 flex items-center gap-3 bg-gray-50/60 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-gray-200 focus-within:border-blue-500 focus-within:bg-white focus-within:shadow-sm transition">
-                <MapPinIcon className="w-6 h-6 text-indigo-500" />
-                <div className="flex-1 text-left">
+              <div className="flex-grow md:flex-[4] flex items-center gap-3 bg-gray-50/60 px-4 py-3.5 rounded-2xl border border-gray-100 hover:border-gray-200 focus-within:border-blue-500 focus-within:bg-white focus-within:shadow-sm transition">
+                <MapPinIcon className="w-6 h-6 text-indigo-500 flex-shrink-0" />
+                <div className="flex-1 text-left min-w-0">
                   <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Location</span>
                   <select
                     value={searchCity}
                     onChange={(e) => setSearchCity(e.target.value)}
-                    className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full cursor-pointer appearance-none"
+                    className="bg-transparent text-sm font-bold text-gray-700 outline-none w-full cursor-pointer appearance-none truncate"
                   >
                     <option value="">Choose a city</option>
                     <option value="Casablanca">Casablanca</option>
@@ -218,15 +218,13 @@ const Section = () => {
               </div>
 
               {/* Find Doctors CTA button */}
-              <div className="md:col-span-3">
-                <button 
-                  type="submit" 
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl hover:shadow-lg hover:shadow-blue-500/10 hover:scale-[1.02] active:scale-[0.98] transition duration-200 flex items-center justify-center gap-2"
-                >
-                  <MagnifyingGlassIcon className="w-5.5 h-5.5" />
-                  <span>Find Doctors</span>
-                </button>
-              </div>
+              <button 
+                type="submit" 
+                className="w-full md:w-auto md:min-w-[180px] bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold py-3.5 px-8 rounded-2xl hover:shadow-lg hover:shadow-blue-500/10 hover:scale-[1.02] active:scale-[0.98] transition duration-200 flex items-center justify-center gap-2 flex-shrink-0 shadow-sm"
+              >
+                <MagnifyingGlassIcon className="w-5 h-5 flex-shrink-0" />
+                <span>Find Doctors</span>
+              </button>
 
             </form>
 
